@@ -495,11 +495,18 @@
     }
 
     $.post("{{ url_for('home') }}", { code: cmd }, function(d) {
+
       // only show help to the Help tab
       if (/help[(].+[)]/.test(cmd)) {
         $('a[href="#' + "help" + '"]').tab("show");
         $("#help-content").text(d.output || "");
       } else {
+
+       if (cmd.substring(0, 11) == "pyspark_log") {
+        $('a[href="#' + "pysparklog" + '"]').tab("show");
+        $("#pysparklog-content").text(d.output || "");
+        } else {
+
         jqconsole.Write((d.output || "") + '\n', 'jqconsole-output');
         if (d.image) {
           var plt = "data:image/png;charset=utf-8;base64," + d.image;
@@ -507,6 +514,7 @@
           $("#export-plot").attr("href", plt);
           plots.push(plt);
           $('a[href="#plots"]').tab("show");
+        }
         }
       }
       if (d.error) {

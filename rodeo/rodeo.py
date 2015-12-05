@@ -13,6 +13,8 @@ import io
 import os
 import sys
 
+import utils
+
 app = Flask(__name__)
 __dirname = os.path.dirname(os.path.abspath(__file__))
 active_dir = "."
@@ -84,9 +86,15 @@ def home():
                 result = kernel.get_dataframes()
             elif request.form.get('complete'):
                 result = kernel.complete(code)
+            elif code.startswith("pyspark_log"):
+                spark_log = os.environ.get("SPARK_LOG", None)
+                result = {}
+                if spark_log:
+                    result["output"] = utils.tail(spark_log, 10)
+                else:
+                    result["output"] = "SPARK_LOG not set"
             else:
                 result = kernel.execute(code)
-
             return jsonify(result)
         else:
             return "BAD"
