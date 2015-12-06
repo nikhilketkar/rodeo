@@ -501,12 +501,6 @@
         $('a[href="#' + "help" + '"]').tab("show");
         $("#help-content").text(d.output || "");
       } else {
-
-       if (cmd.substring(0, 11) == "pyspark_log") {
-        $('a[href="#' + "pysparklog" + '"]').tab("show");
-        $("#pysparklog-content").text(d.output || "");
-        } else {
-
         jqconsole.Write((d.output || "") + '\n', 'jqconsole-output');
         if (d.image) {
           var plt = "data:image/png;charset=utf-8;base64," + d.image;
@@ -514,7 +508,6 @@
           $("#export-plot").attr("href", plt);
           plots.push(plt);
           $('a[href="#plots"]').tab("show");
-        }
         }
       }
       if (d.error) {
@@ -738,7 +731,37 @@ $(document).keydown(function (e) {
     }
   }
 });
-// });
+ //});
+
 </script>
+
+<script>
+(function poll() {
+setTimeout(function() {
+   $.ajax({
+          url: "{{ url_for('pysparklog') }}",
+          headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          type: "GET",
+          success: function(data) {
+
+          // check if null return (no results from API)
+          if (data == null) {
+                console.log('no data!');
+          } else {
+
+          $("#pysparklog-content").text(data.output || "");
+
+          }
+          },
+          dataType: "json",
+          complete: poll,
+          timeout: 2000
+          })
+   }, 3000);
+})();
+</script>
+
 </body>
 </html>

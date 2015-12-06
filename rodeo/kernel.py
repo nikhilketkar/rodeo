@@ -89,8 +89,8 @@ class Kernel(object):
         self.client.load_connection_file()
         self.client.start_channels()
         # load our monkeypatches...
-        self.client.execute("%matplotlib inline")
-        self.client.execute(vars_patch)
+        self.execute("%matplotlib inline")
+        self.execute(vars_patch)
 
     def _run_code(self, code, timeout=0.1):
         # this function executes some code and waits for it to completely finish
